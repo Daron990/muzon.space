@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>muzon.space — музыка</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: #f5f5f5;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .wrap { max-width: 900px; margin: auto; padding: 32px 20px 120px; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:45px; }
+    .logo { font-size: 25px; font-weight: 700; letter-spacing: -1px; }
+    .sub { color:#777; font-size:13px; }
+    h1 { font-size:42px; margin:0 0 10px; letter-spacing:-2px; }
+    .intro { color:#888; margin-bottom:30px; }
+    .track {
+      display:flex; align-items:center; gap:16px;
+      padding:15px 0; border-bottom:1px solid #1d1d1d;
+    }
+    .cover {
+      width:58px; height:58px; border-radius:7px;
+      background:#181818; display:flex; align-items:center; justify-content:center;
+      color:#777; flex-shrink:0; overflow:hidden;
+    }
+    .cover img { width:100%; height:100%; object-fit:cover; }
+    .info { flex:1; min-width:0; }
+    .title { font-weight:600; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .artist { color:#777; font-size:13px; }
+    button, .download {
+      border:0; background:#fff; color:#000; border-radius:50%;
+      width:40px; height:40px; cursor:pointer; font-size:16px;
+      display:flex; align-items:center; justify-content:center; text-decoration:none;
+    }
+    .download { background:#181818; color:#fff; border-radius:8px; font-size:14px; }
+    .player {
+      position:fixed; left:0; right:0; bottom:0; background:rgba(12,12,12,.96);
+      border-top:1px solid #222; backdrop-filter:blur(12px);
+      padding:13px 20px;
+    }
+    .player-inner { max-width:900px; margin:auto; display:flex; align-items:center; gap:14px; }
+    .now { flex:1; min-width:0; }
+    .now-title { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .now-artist { color:#777; font-size:12px; margin-top:3px; }
+    audio { width:260px; }
+    @media (max-width:650px) {
+      .wrap { padding-top:22px; }
+      h1 { font-size:34px; }
+      .sub { display:none; }
+      audio { width:150px; }
+      .download { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="logo">muzon.space</div>
+      <div class="sub">personal music library</div>
+    </header>
+
+    <h1>Моя музыка</h1>
+    <p class="intro">Слушай и скачивай мои треки.</p>
+
+    <section id="tracks"></section>
+  </main>
+
+  <div class="player">
+    <div class="player-inner">
+      <button id="playBtn" onclick="togglePlay()">▶</button>
+      <div class="now">
+        <div class="now-title" id="nowTitle">Выбери трек</div>
+        <div class="now-artist" id="nowArtist">—</div>
+      </div>
+      <audio id="audio" controls></audio>
+    </div>
+  </div>
+
+  <script>
+    // Добавляй свои треки сюда.
+    // Файлы MP3 потом положи в папку music.
+    const tracks = [
+      { title: "Мой первый трек", artist: "Unknown", file: "music/track1.mp3", cover: "" },
+      { title: "Второй трек", artist: "Unknown", file: "music/track2.mp3", cover: "" }
+    ];
+
+    const list = document.getElementById("tracks");
+    const audio = document.getElementById("audio");
+    const nowTitle = document.getElementById("nowTitle");
+    const nowArtist = document.getElementById("nowArtist");
+    const playBtn = document.getElementById("playBtn");
+
+    tracks.forEach((track, index) => {
+      const el = document.createElement("div");
+      el.className = "track";
+      el.innerHTML = `
+        <div class="cover">${track.cover ? `<img src="${track.cover}" alt="">` : "♪"}</div>
+        <div class="info">
+          <div class="title">${track.title}</div>
+          <div class="artist">${track.artist}</div>
+        </div>
+        <button onclick="playTrack(${index})">▶</button>
+        <a class="download" href="${track.file}" download>↓</a>
+      `;
+      list.appendChild(el);
+    });
+
+    function playTrack(index) {
+      const track = tracks[index];
+      audio.src = track.file;
+      nowTitle.textContent = track.title;
+      nowArtist.textContent = track.artist;
+      audio.play();
+      playBtn.textContent = "Ⅱ";
+    }
+
+    function togglePlay() {
+      if (!audio.src) return;
+      if (audio.paused) {
+        audio.play();
+        playBtn.textContent = "Ⅱ";
+      } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+      }
+    }
+
+    audio.addEventListener("play", () => playBtn.textContent = "Ⅱ");
+    audio.addEventListener("pause", () => playBtn.textContent = "▶");
+  </script>
+</body>
+</html>
